@@ -21,7 +21,6 @@ function __construct()
         "stylesheet_directory_uri",
         "template_directory_uri",
         "plugins_url",
-        "wp_get_attachment_url",
     );
     foreach ($hooks as $hook) {
         add_filter(
@@ -29,6 +28,15 @@ function __construct()
             array(&$this, "filter")
         );
     }
+    add_filter('the_content', array(&$this, 'the_content'));
+}
+
+public function the_content($html)
+{
+    $up = wp_upload_dir();
+    $upload_url = $up['baseurl'];
+    $filterd_url = $this->filter($upload_url);
+    return str_replace($upload_url, $filterd_url, $html);
 }
 
 public function filter($uri)
